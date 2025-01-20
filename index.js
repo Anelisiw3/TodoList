@@ -1,13 +1,16 @@
-// node framework
 const express = require('express');
-// file system package
 const fs = require('fs');
+const path = require("path");
 const app = express();
 const port = 3700;
 
 app.use(
     express.static('pubvixc')
 );
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "tool.html"));
+});
 
 app.get('/', (req, res) => {
     fs.readFile('tool.html', function(err, data) {
