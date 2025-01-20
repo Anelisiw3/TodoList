@@ -29,16 +29,21 @@ const dbConfig = {
   password: 'Am@90084',
   database: 'mytodos',
 };
+
+const bodyParser = require('body-parser');
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const pool = mysql.createPool(dbConfig);
 
-const bodyParser = require('body-parser');
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "tool.html"));
+});
 
 app.get('/tasks', async (req, res) => {
     try {
-      const results = await pool.execute('SELECT * FROM tasks');
-      res.json(results[0]);
+      const [tasks] = await pool.execute('SELECT * FROM tasks');
+      res.json(tasks);
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Error fetching tasks' });
@@ -48,14 +53,14 @@ app.get('/tasks', async (req, res) => {
   app.post('/tasks', async (req, res) => {
     try {
       const { task_list } = req.body;
-      const results = await pool.execute(
+      const [results] = await pool.execute(
         'INSERT INTO tasks (task_list) VALUES (?)',
-        [task_list]
+        [task_list, 0]
       );
-      res.json({ id: results.insertId, task_list });
+      res.json({ id: results.insertId, task_list, completed: 0 });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: 'Error creating a list' });
+      res.status(500).json({ message: 'Error adding a list' });
     }
   });
 
@@ -74,13 +79,13 @@ app.get('/tasks', async (req, res) => {
   
   app.put('/tasks/:id', async (req, res) => {
     try {
-    const id = req.params.id;
-      const { task_list } = req.body;
-      await pool.execute(
-        `UPDATE tasks SET task_list = ? WHERE id = ${id}`,
-        [task_list]
+    const {id} = req.params;
+      const { completed } = req.body;
+      await pool.execute( `UPDATE tasks SET completed = ? WHERE id = ?`, completed,
+        id,
       );
-      res.json({ id, task_list });
+    
+      res.json({ id, completed });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Error updating task' });
@@ -89,15 +94,15 @@ app.get('/tasks', async (req, res) => {
   
   app.delete('/tasks/:id', async (req, res) => {
     try {
-      const id = req.params.id;
+      const {id} = req.params;
       await pool.execute('DELETE FROM tasks WHERE id = ?', [id]);
       res.json({ message: 'task deleted successfully' });
     } catch (err) {
       console.error(err);
-      res.status(404).json({ message: 'task not found' });
+      res.status(500).json({ message: 'error deleting task' });
     }
   });
 
 app.listen(port, () => {
-  console.log(`server listening on port ${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
