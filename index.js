@@ -3,26 +3,18 @@ const fs = require('fs');
 const path = require("path");
 const app = express();
 const port = 3700;
-
-app.use(
-    express.static('pubvixc')
-);
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "tool.html"));
-});
-
-app.get('/', (req, res) => {
-    fs.readFile('tool.html', function(err, data) {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write(data);
-        return res.end();
-    });
-});
-
-// db.js
 const mysql = require('mysql2/promise');
+const bodyParser = require('body-parser');
 
+
+
+app.use(express.static('public'));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+  
+// database connection
 const dbConfig = {
   host: 'localhost',
   user: 'root',
@@ -30,16 +22,14 @@ const dbConfig = {
   database: 'mytodos',
 };
 
-const bodyParser = require('body-parser');
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 const pool = mysql.createPool(dbConfig);
 
+//server HTML file
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "tool.html"));
 });
 
+//Get all tasks
 app.get('/tasks', async (req, res) => {
     try {
       const [tasks] = await pool.execute('SELECT * FROM tasks');
@@ -50,39 +40,52 @@ app.get('/tasks', async (req, res) => {
     }
   });
   
+  // Add a new task
   app.post('/tasks', async (req, res) => {
     try {
       const { task_list } = req.body;
+      if (!task_list) {
+        return res.status(400).json({ message: "Task name is required" });
+      }
       const [results] = await pool.execute(
-        'INSERT INTO tasks (task_list) VALUES (?)',
+        'INSERT INTO tasks (task_list,completed) VALUES (?, ?)',
         [task_list, 0]
       );
-      res.json({ id: results.insertId, task_list, completed: 0 });
+      res.status(201).json({ id: results.insertId, task_list, completed: 0 });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Error adding a list' });
     }
   });
-
-
   
+  
+  //Get a task by ID
   app.get('/tasks/:id', async (req, res) => {
     try {
-      const id = req.params.id;
+      const {id} = req.params.id;
       const [results] = await pool.execute(`SELECT * FROM tasks WHERE id = ?`, [id]);
+      if (results.lenght === 0) {
+        return res.status(404).json({ message: "Task not found" });
+      }
       res.json(results[0]);
     } catch (err) {
       console.error(err);
-      res.status(404).json({ message: 'task not found' });
+      res.status(500).json({ message: 'error fetching task'});
     }
-  });
+  }); 
   
+  //Update a task
   app.put('/tasks/:id', async (req, res) => {
     try {
     const {id} = req.params;
       const { completed } = req.body;
-      await pool.execute( `UPDATE tasks SET completed = ? WHERE id = ?`, completed,
-        id,
+      if (completed === undefined) {
+        return res
+          .status(400)
+          .json({ message: "Completed status is required" });
+      }
+      await pool.execute( `UPDATE tasks SET completed = ? WHERE id = ?`,
+         [completed,id]
       );
     
       res.json({ id, completed });
@@ -92,6 +95,7 @@ app.get('/tasks', async (req, res) => {
     }
   });
   
+  //Delete a task
   app.delete('/tasks/:id', async (req, res) => {
     try {
       const {id} = req.params;
@@ -103,6 +107,7 @@ app.get('/tasks', async (req, res) => {
     }
   });
 
+  //start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
