@@ -43,15 +43,12 @@ app.get('/tasks', async (req, res) => {
   // Add a new task
   app.post('/tasks', async (req, res) => {
     try {
-      const { task_list } = req.body;
-      if (!task_list) {
-        return res.status(400).json({ message: "Task name is required" });
-      }
+      const { task_list, task_time } = req.body;
       const [results] = await pool.execute(
-        'INSERT INTO tasks (task_list,completed) VALUES (?, ?)',
-        [task_list, 0]
+        'INSERT INTO tasks (task_list, task_time) VALUES (?, ?)',
+        [task_list, task_time]
       );
-      res.status(201).json({ id: results.insertId, task_list, completed: 0 });
+      res.json({ id: results.insertId, task_list, task_time, completed: 0 });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Error adding a list' });

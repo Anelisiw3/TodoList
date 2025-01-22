@@ -8,11 +8,14 @@
     <title>Todo list</title>
 </head>
 <body>
+
     <header>
-        <h1> <span>My To Do List</h1>
+        <h1 class="title">My To Do List</h1>
     </header>
+
     <form id="todo-form">
         <input type="text" id="todo-input" class="todo-input" placeholder="Add a new task">
+        <input type="time" id="todo-time" class="todo-time">
         <button class="todo-button" type="submit">
           <i class="fas fa-plus-circle fa-lg"></i>
         </button>
@@ -20,6 +23,8 @@
       <div class="todos-container">
         <ul id="todo-list" class="todo-list"></ul>
       </div>
+
+      
 
       <script>
         const apiUrl = "http://localhost:3700/tasks";
@@ -38,7 +43,7 @@
     
         // Render tasks to the DOM
         function renderTasks(tasks) {
-          todoList.innerHTML = "";
+          todoList.innerHTML = ""
           tasks.forEach((task) => {
             const li = document.createElement("li");
             li.classList.add("todos");
@@ -46,6 +51,7 @@
     
             li.innerHTML = `
               <span class="todo-item">${task.task_list}</span>
+              <span class="todo-time">${task.task_time || 'No time set'}</span>
               <button class="complete-btn" onclick="toggleComplete(${task.id}, ${task.completed ? 0 : 1})">
                 <i class="fas fa-check-circle"></i>
               </button>
@@ -56,11 +62,13 @@
             todoList.appendChild(li);
           });
         }
+
     
         // Add a new task
         todoForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const task = todoInput.value.trim();
+          const time = todoTime.value.trim();
           if (!task) return;
     
           const response = await fetch(apiUrl, {
@@ -71,6 +79,7 @@
           const newTask = await response.json();
           fetchTasks();
           todoInput.value = "";
+          todoTime.value = "";
         });
     
         // Toggle task completion
