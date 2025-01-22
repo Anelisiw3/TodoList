@@ -52,7 +52,7 @@
   
   form button:hover{
     color: white;
-    background: yellow;
+    background: black;
   }
 
   .fa-plus-circle{
@@ -70,6 +70,7 @@
   min-width: 30%;
   list-style: none;
   }
+  
   
   .todos{
     margin: 0.5rem;
