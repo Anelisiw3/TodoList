@@ -16,8 +16,9 @@
     <form id="todo-form">
         <input type="text" id="todo-input" class="todo-input" placeholder="Add a new task">
         <input type="time" id="todo-time" class="todo-time">
-        <button class="todo-button" type="submit">
-          <i class="fas fa-plus-circle fa-lg"></i>
+        <button class="todo-button" type="submit" title="Add Task">
+        <i class="fas fa-plus-circle fa-lg" aria-hidden="true"></i>
+        <span class="sr-only">Add Task</span>
         </button>
       </form>
       <div class="todos-container">
@@ -32,6 +33,7 @@
         // DOM Elements
         const todoForm = document.getElementById("todo-form");
         const todoInput = document.getElementById("todo-input");
+        const todoTime = document.getElementById("todo-time");
         const todoList = document.getElementById("todo-list");
     
         // Fetch tasks from the backend
@@ -50,8 +52,7 @@
             if (task.completed) li.classList.add("completed");
     
             li.innerHTML = `
-              <span class="todo-item">${task.task_list}</span>
-              <span class="todo-time">${task.task_time || 'No time set'}</span>
+              <span class="todo-item">${task.task_list} (${task.task_time || "No time"})</span>
               <button class="complete-btn" onclick="toggleComplete(${task.id}, ${task.completed ? 0 : 1})">
                 <i class="fas fa-check-circle"></i>
               </button>
@@ -69,12 +70,13 @@
           e.preventDefault();
           const task = todoInput.value.trim();
           const time = todoTime.value.trim();
-          if (!task) return;
+
+          if (!task || !time) return;
     
           const response = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ task_list: task }),
+            body: JSON.stringify({ task_list: task, task_time: time }),
           });
           const newTask = await response.json();
           fetchTasks();

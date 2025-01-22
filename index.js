@@ -51,7 +51,7 @@ app.get('/tasks', async (req, res) => {
       res.json({ id: results.insertId, task_list, task_time, completed: 0 });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: 'Error adding a list' });
+      res.status(500).json({ message: 'Error adding a task' });
     }
   });
   
