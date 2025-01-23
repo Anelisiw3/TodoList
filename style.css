@@ -67,8 +67,10 @@ form button:hover {
 }
 
 .todo-list {
-  min-width: 30%;
-  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
 }
 
 
@@ -79,46 +81,61 @@ form button:hover {
   color: black;
   font-size: 1.5rem;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  border-radius: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 2px solid #ffcc00; 
+  height: 150px;
+  width: 200px;
   transition: transform 0.2s ease, box-shadow 0.2s ease; 
+}
+
+.todos:hover {
+  transform: translateY(-3px); 
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 .trash-btn,
 .complete-btn {
-  color: red;
+  color: white;
+  font-size: 1.2rem;
+  margin: 0.5rem;
   border: none;
   cursor: pointer;
-  font-size: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 50%;
+  padding: 0.4rem  0.8rem;
+  border-radius: 8px;
 }
 
 .complete-btn {
-  margin: 0.5rem;
-  padding-left: 0.5rem;
-  background: white;
-  color: black;
-  font-size: 1.5rem;
-  background: yellow;
-  margin-left: 0.5rem;
-
+  background: green;
+  
 }
 
 .trash-btn {
-  background: grey;
+  background: red;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%; 
 }
 
 .todo-item {
-  flex: 1;
-  padding: 0 0.5rem;
+  text-align: center; 
+  margin-bottom: auto;
+  font-weight: bold;
 }
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; 
+  margin-top: auto; 
+}
+
 
 .fa-trash,
 .fa-check-circle {
