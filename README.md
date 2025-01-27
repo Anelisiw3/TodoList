@@ -126,10 +126,6 @@ Access the Application
 
 Open the index.html file in the public directory using a live server (e.g., VS Code Live Server) or host it on a local HTTP server:
 
-npx http-server public -p 8080
-
-Visit http://localhost:8080 in your browser.
-
 Interacting with the App
 
 Add a task using the input fields for description and time.
@@ -142,7 +138,7 @@ Delete tasks using the trash button.
 
 Backend Deployment:
 
-Host the server on platforms like Render, Heroku, or AWS Elastic Beanstalk.
+Host the server on platforms like Render
 
 ## Frontend Deployment:
 
