@@ -1,11 +1,12 @@
 {
-  "name": "null",
+  "name": "todo-list",
   "version": "1.0.0",
-  "description": "mtati",
+  "description": "Todo List Application",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "echo 'No build step required'"
   },
   "author": "",
   "license": "ISC",
