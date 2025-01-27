@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'index.html')));
 
 // Routes
 app.get('/', (req, res) => {
-  fs.readFile(filePath, (error, data) => {
+  fs.readFile(filePath, (error, data) => { 
     if (error) {
       console.error('Error reading index.html:', error);
       res.status(404).send('<h1>Error: File not found</h1>');
