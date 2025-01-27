@@ -27,14 +27,11 @@ jobs:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
         heroku_app_name: "todo-list-anelisiw3"
         heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        procfile: "web: node server.js"
       env:
         HD_MONGODB_URI: ${{ secrets.MONGODB_URI }}
         
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+    - name: Health Check
+      run: |
+        sleep 30
+        curl https://todo-list-anelisiw3.herokuapp.com/health || exit 1
