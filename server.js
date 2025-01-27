@@ -4,13 +4,13 @@ const express = require('express');
 const cors = require('cors'); 
 const { MongoClient, ObjectId } = require('mongodb'); 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const mongoUrl = 'mongodb+srv://anelisiwemtatiam:2ouFw92f8X5tvBBT@cluster0.8h3i3.mongodb.net/'; 
 const dbName = 'TodoList'; 
 let db, tasksCollection;
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({origin: 'https://github.com/Anelisiw3' })); // Enable CORS for all routes
 app.use(express.static('public')); 
 app.use(express.json()); // For parsing JSON data in POST requests
 
@@ -26,26 +26,15 @@ MongoClient.connect(mongoUrl, { useUnifiedTopology: true })
     process.exit(1); // Exit the process if the connection fails
   });
 
+  // Routes
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is listening on http://localhost:${port}`);
-});
-
-const path = require('path');
-app.use(express.static(path.join(__dirname, 'index.html')));
-
-
-// Routes
-app.get('/', (req, res) => {
-  fs.readFile(filePath, (error, data) => { 
-    if (error) {
-      console.error('Error reading index.html:', error);
-      res.status(404).send('<h1>Error: File not found</h1>');
-    } else {
-      res.setHeader('Content-Type', 'text/html');
-      res.send(data);
-    }
-  });
 });
 
 // Get all tasks
