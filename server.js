@@ -10,7 +10,7 @@ const dbName = 'TodoList';
 let db, tasksCollection;
 
 // Middleware
-app.use(cors({origin: 'https://github.com/Anelisiw3' })); // Enable CORS for all routes
+app.use(cors()); // Enable CORS for all origins in development
 app.use(express.static('public')); 
 app.use(express.json()); // For parsing JSON data in POST requests
 
