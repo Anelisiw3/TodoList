@@ -5,8 +5,8 @@
 }
 
 body {
-  background-color: gray;
-  background-image: url(../images/image5.jpg);
+  background-color: orangered;
+  background-image: url(../TodoList/public/image5.jpg); 
   background-repeat: no-repeat;
   background-size: cover;
   color: black;
