@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <title>Todo List</title>
+</head>
+
+<body>
+  <header>
+    <h1 class="title">My To DoZ</h1>
+  </header>
+
+  <form id="todo-form">
+    <label for="todo-input" class="sr-only">Task Description</label>
+    <input type="text" id="todo-input" class="todo-input" placeholder="Add a new task" required>
+
+    <label for="todo-time" class="sr-only">Task Time</label>
+    <input type="time" id="todo-time" class="todo-time" title="Task Time" required>
+
+    <button class="todo-button" type="submit" title="Add Task">
+      <i class="fas fa-plus-circle fa-lg" aria-hidden="true"></i>
+      <span class="sr-only">Add Task</span>
+    </button>
+  </form>
+
+  <div class="todos-container">
+    <ul id="todo-list" class="todo-list"></ul>
+  </div>
+
+  <script>
+    const apiUrl = "http://localhost:3000/api/tasks"; 
+
+    // DOM Elements
+    const todoForm = document.getElementById("todo-form");
+    const todoInput = document.getElementById("todo-input");
+    const todoTime = document.getElementById("todo-time");
+    const todoList = document.getElementById("todo-list");
+
+    // Fetch tasks from the backend
+    async function fetchTasks() {
+      try {
+        const response = await fetch(apiUrl);
+        const tasks = await response.json();
+        renderTasks(tasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    }
+
+    // Render tasks to the DOM
+    function renderTasks(tasks) {
+      todoList.innerHTML = "";
+      tasks.forEach((task) => {
+        const li = document.createElement("li");
+        li.classList.add("todos");
+        if (task.completed) li.classList.add("completed");
+
+        li.innerHTML = `
+          <span class="todo-item">${task.task_list} (${task.task_time || "No time"})</span>
+          <div class="button-container">
+            <button class="complete-btn" onclick="toggleComplete('${task._id}', ${task.completed ? 0 : 1})" title="Mark as completed">
+              <i class="fas fa-check-circle"></i>
+            </button>
+            <button class="trash-btn" onclick="deleteTask('${task._id}')" title="Delete Task">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+        todoList.appendChild(li);
+      });
+    }
+
+    // Add a new task
+    todoForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const task = todoInput.value.trim();
+      const time = todoTime.value.trim();
+
+      if (!task || !time) return;
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task_list: task, task_time: time, completed: false }),
+        });
+
+        if (response.ok) {
+          fetchTasks();
+          todoInput.value = "";
+          todoTime.value = "";
+        } else {
+          console.error("Failed to add task:", await response.text());
+        }
+      } catch (error) {
+        console.error("Error adding task:", error);
+      }
+    });
+
+    // Toggle task completion
+    async function toggleComplete(_id, completed) {
+      try {
+        const response = await fetch(`${apiUrl}/${_id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ completed: Boolean(completed) }),
+        });
+
+        if (response.ok) {
+          fetchTasks();
+        } else {
+          console.error("Failed to update task:", await response.text());
+        }
+      } catch (error) {
+        console.error("Error updating task:", error);
+      }
+    }
+
+    // Delete a task
+    async function deleteTask(_id) {
+      try {
+        const response = await fetch(`${apiUrl}/${_id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          fetchTasks();
+        } else {
+          console.error("Failed to delete task:", await response.text());
+        }
+      } catch (error) {
+        console.error("Error deleting task:", error);
+      }
+    }
+
+    // Fetch tasks on page load
+    fetchTasks();
+  </script>
+</body>
+
+</html>
