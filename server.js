@@ -5,32 +5,40 @@ const cors = require('cors');
 const { MongoClient, ObjectId } = require('mongodb'); 
 const app = express();
 const port = process.env.PORT || 3000;
-const mongoUrl = 'mongodb+srv://anelisiwemtatiam:2ouFw92f8X5tvBBT@cluster0.8h3i3.mongodb.net/'; 
+const mongoUrl = process.env.MONGODB_URI || 'mongodb+srv://anelisiwemtatiam:2ouFw92f8X5tvBBT@cluster0.8h3i3.mongodb.net/';
 const dbName = 'TodoList'; 
 let db, tasksCollection;
 
 // Middleware
-app.use(cors()); // Enable CORS for all origins in development
+app.use(cors()); // Enable CORS for all origins
 app.use(express.static('public')); 
 app.use(express.json()); // For parsing JSON data in POST requests
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!', error: err.message });
+});
+
 // Connect to MongoDB
-MongoClient.connect(mongoUrl, { useUnifiedTopology: true })
-  .then((client) => {
+async function connectDB() {
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useUnifiedTopology: true });
     console.log('Connected to MongoDB');
     db = client.db(dbName);
     tasksCollection = db.collection('Todo_List');
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
-    process.exit(1); // Exit the process if the connection fails
-  });
+    process.exit(1);
+  }
+}
 
-  // Routes
+connectDB();
+
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
-
 
 // Start the server
 app.listen(port, () => {
