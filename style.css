@@ -6,7 +6,7 @@
 
 body {
   background-color: yellow;
- 
+  background-image: url(../image5.jpg);  
   background-repeat: no-repeat;
   background-size: cover;
   color: black;
