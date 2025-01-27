@@ -22,7 +22,11 @@ app.use((err, req, res, next) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK' });
+  res.status(200).json({ 
+    status: 'OK',
+    environment: process.env.NODE_ENV || 'development',
+    mongodb: db ? 'Connected' : 'Not Connected'
+  });
 });
 
 // Connect to MongoDB

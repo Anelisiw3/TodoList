@@ -33,8 +33,16 @@
   </div>
 
   <script>
-    // Use relative URL for API endpoints to work in both development and production
-    const apiUrl = "/api/tasks";
+    // Get the base URL based on the environment
+    const getBaseUrl = () => {
+      if (window.location.hostname === 'localhost') {
+        return 'http://localhost:3000';
+      }
+      return window.location.origin;
+    };
+
+    // API endpoint
+    const apiUrl = `${getBaseUrl()}/api/tasks`;
 
     // Show error message function
     function showError(message) {
