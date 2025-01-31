@@ -6,9 +6,11 @@
 
 body {
   background-color: yellow;
-  background-image: url(../image5.jpg);  
+  background-image: url('/image5.jpg');
+  background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+  background-attachment: fixed;
   color: black;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   min-height: 100vh;
