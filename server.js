@@ -1,5 +1,6 @@
 const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
 const express = require('express');
 const cors = require('cors'); 
@@ -13,6 +14,7 @@ let db, tasksCollection;
 // Middleware
 app.use(cors()); // Enable CORS for all origins
 app.use(express.static('public')); 
+app.use(express.static('.')); // Serve files from root directory
 app.use(express.json()); // For parsing JSON data in POST requests
 
 // Error handling middleware
