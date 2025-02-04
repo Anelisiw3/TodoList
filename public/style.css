@@ -5,15 +5,16 @@
 }
 
 body {
-  background-color: orangered;
+  background-color: #f4f6f9;
   background-image: url('./image5.jpg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
-  color: black;
+  color: #333;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 
